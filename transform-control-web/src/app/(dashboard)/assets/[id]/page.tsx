@@ -26,6 +26,13 @@ export default async function AssetPage({ params }: { params: { id: string } }) 
         .eq('transformer_id', id)
         .single()
 
+    // Fetch Inspections
+    const { data: inspections } = await supabase
+        .from('inspections')
+        .select('*')
+        .eq('transformer_id', id)
+        .order('date', { ascending: false })
+
     if (!transformer) {
         return <div>Activo no encontrado</div>
     }
@@ -35,6 +42,7 @@ export default async function AssetPage({ params }: { params: { id: string } }) 
             transformer={transformer}
             templates={templates || []}
             currentConfig={config}
+            inspections={inspections || []}
         />
     )
 }

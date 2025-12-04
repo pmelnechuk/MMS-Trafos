@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { Loader2, Save, ArrowLeft, Settings, Activity, FileText } from 'lucide-react'
 import Link from 'next/link'
 import QRCode from 'qrcode'
+import AssetHistory from './AssetHistory'
 
 interface Question {
     id: string
@@ -25,9 +26,10 @@ interface AssetDetailsProps {
     transformer: any
     templates: Template[]
     currentConfig: any
+    inspections: any[]
 }
 
-export default function AssetDetails({ transformer, templates, currentConfig }: AssetDetailsProps) {
+export default function AssetDetails({ transformer, templates, currentConfig, inspections }: AssetDetailsProps) {
     const [activeTab, setActiveTab] = useState('info')
     const [loading, setLoading] = useState(false)
     const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null)
@@ -43,8 +45,6 @@ export default function AssetDetails({ transformer, templates, currentConfig }: 
     useEffect(() => {
         // Generate QR for display
         if (transformer.qr_code) {
-            // If qr_code is a JSON string, we might want to encode just the ID or the whole string
-            // For now assuming it's the content string
             QRCode.toDataURL(transformer.qr_code).then(setQrCodeUrl)
         }
     }, [transformer])
@@ -79,14 +79,6 @@ export default function AssetDetails({ transformer, templates, currentConfig }: 
                 enabled_questions: enabledQuestions,
                 updated_at: new Date().toISOString()
             }
-
-            // Upsert config
-            // We need to check if we have an ID for existing config to update, or insert new
-            // But upsert on transformer_id (if unique) or just delete and insert?
-            // transformer_form_config doesn't seem to have a unique constraint on transformer_id in the schema description I saw earlier?
-            // Let's assume 1:1 relation. Ideally we should have a unique constraint or PK.
-            // Let's try upserting based on transformer_id if possible, but standard upsert needs a constraint.
-            // For now, let's check if exists.
 
             if (currentConfig?.id) {
                 await supabase
@@ -126,8 +118,8 @@ export default function AssetDetails({ transformer, templates, currentConfig }: 
                 </div>
                 <div className="flex gap-2">
                     <span className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${transformer.status === 'GREEN' ? 'bg-green-100 text-green-800' :
-                            transformer.status === 'YELLOW' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-red-100 text-red-800'
+                        transformer.status === 'YELLOW' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
                         }`}>
                         {transformer.status}
                     </span>
@@ -140,8 +132,8 @@ export default function AssetDetails({ transformer, templates, currentConfig }: 
                     <button
                         onClick={() => setActiveTab('info')}
                         className={`${activeTab === 'info'
-                                ? 'border-indigo-500 text-indigo-600'
-                                : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                            ? 'border-indigo-500 text-indigo-600'
+                            : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                             } whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium flex items-center gap-2`}
                     >
                         <Activity className="h-4 w-4" />
@@ -150,8 +142,8 @@ export default function AssetDetails({ transformer, templates, currentConfig }: 
                     <button
                         onClick={() => setActiveTab('config')}
                         className={`${activeTab === 'config'
-                                ? 'border-indigo-500 text-indigo-600'
-                                : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                            ? 'border-indigo-500 text-indigo-600'
+                            : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                             } whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium flex items-center gap-2`}
                     >
                         <Settings className="h-4 w-4" />
@@ -160,8 +152,8 @@ export default function AssetDetails({ transformer, templates, currentConfig }: 
                     <button
                         onClick={() => setActiveTab('history')}
                         className={`${activeTab === 'history'
-                                ? 'border-indigo-500 text-indigo-600'
-                                : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                            ? 'border-indigo-500 text-indigo-600'
+                            : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                             } whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium flex items-center gap-2`}
                     >
                         <FileText className="h-4 w-4" />
@@ -286,11 +278,7 @@ export default function AssetDetails({ transformer, templates, currentConfig }: 
                 )}
 
                 {activeTab === 'history' && (
-                    <div className="rounded-lg bg-white shadow p-12 text-center">
-                        <FileText className="mx-auto h-12 w-12 text-gray-400" />
-                        <h3 className="mt-2 text-sm font-semibold text-gray-900">Sin historial</h3>
-                        <p className="mt-1 text-sm text-gray-500">Aún no se han realizado inspecciones para este activo.</p>
-                    </div>
+                    <AssetHistory inspections={inspections} />
                 )}
             </div>
         </div>
