@@ -55,8 +55,8 @@ export default async function ReportsPage() {
                                     </td>
                                     <td className="whitespace-nowrap px-3 py-4 text-sm">
                                         <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${inspection.overall_status === 'GREEN' ? 'bg-green-100 text-green-800' :
-                                                inspection.overall_status === 'YELLOW' ? 'bg-yellow-100 text-yellow-800' :
-                                                    'bg-red-100 text-red-800'
+                                            inspection.overall_status === 'YELLOW' ? 'bg-yellow-100 text-yellow-800' :
+                                                'bg-red-100 text-red-800'
                                             }`}>
                                             {inspection.overall_status}
                                         </span>
@@ -65,15 +65,9 @@ export default async function ReportsPage() {
                                         Técnico ID: {inspection.technician_id?.substring(0, 8)}...
                                     </td>
                                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                        {inspection.pdf_url ? (
-                                            <a href={inspection.pdf_url} className="text-indigo-600 hover:text-indigo-900 flex items-center justify-end gap-1">
-                                                <FileText className="h-4 w-4" /> PDF
-                                            </a>
-                                        ) : (
-                                            <span className="text-gray-300 flex items-center justify-end gap-1">
-                                                <FileText className="h-4 w-4" /> Pendiente
-                                            </span>
-                                        )}
+                                        <a href={`/reports/${inspection.id}`} className="text-indigo-600 hover:text-indigo-900 flex items-center justify-end gap-1">
+                                            <FileText className="h-4 w-4" /> Ver Detalles
+                                        </a>
                                     </td>
                                 </tr>
                             ))}

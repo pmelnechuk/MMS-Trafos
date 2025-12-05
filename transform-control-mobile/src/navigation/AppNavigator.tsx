@@ -6,6 +6,9 @@ import { supabase } from '../lib/supabase'
 import { Session } from '@supabase/supabase-js'
 import LoginScreen from '../screens/LoginScreen'
 import HomeScreen from '../screens/HomeScreen'
+import QRScannerScreen from '../screens/QRScannerScreen'
+import TransformerDetailScreen from '../screens/TransformerDetailScreen'
+import InspectionFormScreen from '../screens/InspectionFormScreen'
 import { View, ActivityIndicator } from 'react-native'
 
 const Stack = createNativeStackNavigator()
@@ -37,7 +40,12 @@ export default function AppNavigator() {
         <NavigationContainer>
             <Stack.Navigator>
                 {session && session.user ? (
-                    <Stack.Screen name="Home" component={HomeScreen} />
+                    <>
+                        <Stack.Screen name="Home" component={HomeScreen} />
+                        <Stack.Screen name="QRScanner" component={QRScannerScreen} />
+                        <Stack.Screen name="TransformerDetail" component={TransformerDetailScreen} />
+                        <Stack.Screen name="InspectionForm" component={InspectionFormScreen} />
+                    </>
                 ) : (
                     <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
                 )}
